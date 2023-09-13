@@ -24,8 +24,12 @@ public class BowController : MonoBehaviour
     [SerializeField] GameOverCanvas gameOverScreen;
     private Vector3 initialArrowPos;
     XRGrabInteractable xrGrabInteractable;
-    Rigidbody bowRigidbody;
+    private Rigidbody bowRigidbody;    
 
+    private void OnEnable()
+    {
+        Arrow.OnThisArrowAddForce += AddForceToArrow;
+    }
 
     private void Start()
     {
@@ -46,10 +50,6 @@ public class BowController : MonoBehaviour
         bowRigidbody.isKinematic = true;
     }
 
-    private void OnEnable()
-    {
-        Arrow.OnThisArrowAddForce += AddForceToArrow;
-    }
 
     public void GameOverPage()
     {
@@ -58,8 +58,7 @@ public class BowController : MonoBehaviour
         ScoreManager.instance.ConnectGamePlayAndGameOverScore(gameOverScreen);
         //GamePlayScreen.inst.currentScore.text = "Score : " + 0;
     }
-
-
+   
     public void SpwanNewArrow()
     {
         for (int i = 0; i < spwanArrowPoint.Count; i++)
@@ -87,7 +86,8 @@ public class BowController : MonoBehaviour
     }
 
     public void BowThrower(float forcePower)
-    {              
+    {
+        
         Vector3 force = currentArrow.transform.forward * forcePower;
         currentArrow.Thrower(force);
         allArrows.Remove(currentArrow);
@@ -150,8 +150,6 @@ public class BowController : MonoBehaviour
     {
         Vector3 linePosition = updatedString;
         bowString.SetPosition(1, linePosition);
-        //forcePower = PullValue();       
-        //currentArrow.transform.localPosition = new Vector3(currentArrow.transform.localPosition.x, currentArrow.transform.localPosition.y, linePosition.z + 0.2f);
     }
 }
 //Rigidbody arrowRb = temp.GetComponent<Rigidbody>();

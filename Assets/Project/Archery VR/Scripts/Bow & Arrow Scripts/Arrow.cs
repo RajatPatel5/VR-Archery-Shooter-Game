@@ -7,33 +7,50 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class Arrow : MonoBehaviour
 {
     Rigidbody arrowRB;
-    XRGrabInteractable xrGrabInteractable;
+    public XRGrabInteractable xrGrabInteractable;
+    public Transform ModelArrow;
     CapsuleCollider frontCollider;
     BoxCollider backCollider;
+    TrailRenderer trialLine;
+    private bool isReadyToThrow = false;
 
     public static event Action<Arrow> OnThisArrowAddForce;
 
+
     void Start()
-    {        
-        xrGrabInteractable = GetComponent<XRGrabInteractable>();
+    {
         frontCollider = GetComponent<CapsuleCollider>();
         backCollider = GetComponent<BoxCollider>();
-        arrowRB = GetComponent<Rigidbody>();        
+        arrowRB = GetComponent<Rigidbody>();
+        trialLine = GetComponent<TrailRenderer>();
         frontCollider.enabled = false;
         backCollider.enabled = true;
         xrGrabInteractable.selectEntered.AddListener(OnGrabingArrow);
         xrGrabInteractable.selectExited.AddListener(OnLeavingArrowCall);
     }
 
+    private void FixedUpdate()
+    {
+        if (isReadyToThrow)
+        {
+            transform.rotation = Quaternion.LookRotation(arrowRB.velocity);
+        }
+    }
+
     private void OnGrabingArrow(SelectEnterEventArgs arg0)
     {
         arrowRB.isKinematic = true;
+        isReadyToThrow = false;
+        trialLine.enabled = false;
+        //xrGrabInteractable.trackRotation = true;
     }
 
     private void OnLeavingArrowCall(SelectExitEventArgs arg0)
     {
         OnThisArrowAddForce?.Invoke(this);
         arrowRB.isKinematic = false;
+        trialLine.enabled = true;
+        //xrGrabInteractable.trackRotation = true;
     }
 
     public void Thrower(Vector3 force)
@@ -41,7 +58,8 @@ public class Arrow : MonoBehaviour
         arrowRB.isKinematic = false;
         frontCollider.enabled = true;
         backCollider.enabled = true;
-        arrowRB.AddForce(force, ForceMode.Impulse);      
+        arrowRB.AddForce(force, ForceMode.Impulse);
+        isReadyToThrow = true;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -64,6 +82,7 @@ public class Arrow : MonoBehaviour
             //ArrorDestroyer();
         }
     }
+
     public void InstantDestroy()
     {
         Destroy(gameObject);
