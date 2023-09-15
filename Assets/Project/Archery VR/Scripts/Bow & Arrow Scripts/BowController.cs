@@ -6,13 +6,20 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class BowController : MonoBehaviour
 {
-    [SerializeField] LineRenderer bowString;
-    [SerializeField] Arrow arrowPrefab;
-    [SerializeField] Transform arrowStartPoint;
-    [SerializeField] Transform arrowEndPoint;
-    [SerializeField] Transform pointBetweenStartAndEnd;
-    [SerializeField] List<Transform> spwanArrowPoint;
-    [SerializeField] List<Arrow> allArrows;
+    [Header("Bow Area")]
+    [SerializeField] private XRGrabInteractable xrGrabInteractable;
+    [SerializeField] private Rigidbody bowRigidbody;
+    [SerializeField] private LineRenderer bowString;
+    [SerializeField] private Arrow arrowPrefab;
+    [SerializeField] private Transform arrowStartPoint;
+    [SerializeField] private Transform arrowEndPoint;
+    [SerializeField] private Transform pointBetweenStartAndEnd;
+
+    [Header("Spwan Arrows List And its Pos")]
+    [SerializeField] private List<Transform> spwanArrowPoint;
+    [SerializeField] private List<Arrow> allArrows;
+    [SerializeField] private Transform distance;
+    public Arrow tempArrow;
     public Arrow currentArrow;
 
     [Header("Arrow Force Area")]
@@ -20,21 +27,30 @@ public class BowController : MonoBehaviour
     [SerializeField] private float minValue;
     [SerializeField] private float maxValue;
 
-    [SerializeField] GamePlayScreen gamePlayScreen;
-    [SerializeField] GameOverCanvas gameOverScreen;
+    [Header("Ui Screen")]
+    [SerializeField] private GamePlayScreen gamePlayScreen;
+    [SerializeField] private GameOverCanvas gameOverScreen;
+
     private Vector3 initialArrowPos;
-    XRGrabInteractable xrGrabInteractable;
-    private Rigidbody bowRigidbody;    
+    private Vector3 initialPos;
+    private Quaternion initialRotation;
 
     private void OnEnable()
     {
         Arrow.OnThisArrowAddForce += AddForceToArrow;
+        Arrow.OnCollisionShouldResetOrNot += CheckValidThrowOrNot;
+    }
+
+    private void OnDisable()
+    {
+        Arrow.OnThisArrowAddForce -= AddForceToArrow;
+        Arrow.OnCollisionShouldResetOrNot -= CheckValidThrowOrNot;
     }
 
     private void Start()
     {
-        xrGrabInteractable = GetComponent<XRGrabInteractable>();
-        bowRigidbody = GetComponent<Rigidbody>();
+        initialPos = transform.position;
+        initialRotation = transform.rotation;
         initialArrowPos = pointBetweenStartAndEnd.localPosition;
         xrGrabInteractable.selectEntered.AddListener(OnGrabingBow);
         xrGrabInteractable.selectExited.AddListener(OnLeavingBOwCall);
@@ -43,6 +59,7 @@ public class BowController : MonoBehaviour
     private void OnLeavingBOwCall(SelectExitEventArgs arg0)
     {
         bowRigidbody.isKinematic = false;
+        Invoke(nameof(ResetBowPos), 0.5f);
     }
 
     private void OnGrabingBow(SelectEnterEventArgs arg0)
@@ -50,15 +67,20 @@ public class BowController : MonoBehaviour
         bowRigidbody.isKinematic = true;
     }
 
-
     public void GameOverPage()
     {
         ScreenManager.instance.ShowNextScreen(ScreenType.GameOverPage);
         ScoreManager.instance.CheckPlayerHighScore(gamePlayScreen);
         ScoreManager.instance.ConnectGamePlayAndGameOverScore(gameOverScreen);
+        ResetBowPos();
         //GamePlayScreen.inst.currentScore.text = "Score : " + 0;
     }
-   
+
+    void ResetBowPos()
+    {
+        transform.SetPositionAndRotation(initialPos, initialRotation);
+    }
+
     public void SpwanNewArrow()
     {
         for (int i = 0; i < spwanArrowPoint.Count; i++)
@@ -76,7 +98,7 @@ public class BowController : MonoBehaviour
     public void UnAssignArrow()
     {
         currentArrow = null;
-        ResetStringPos();
+        ResetStringPos();       
     }
 
     public void ResetStringPos()
@@ -85,17 +107,60 @@ public class BowController : MonoBehaviour
         UpdatePullingString(pointBetweenStartAndEnd.localPosition);
     }
 
+    public void CheckValidThrowOrNot(Arrow arrow)
+    {
+        if (tempArrow == arrow)
+        {
+            float dis = Vector3.Distance(distance.position, arrow.transform.position);
+            Debug.Log("bunss" + dis);
+            if (dis < 1)
+            {
+                arrow.ResetArrowPos();
+                tempArrow = null;
+            }
+            else
+            {
+                Debug.Log("is Remove");
+                allArrows.Remove(arrow);
+                arrow.ArrorDestroyer();
+                if (allArrows.Count == 0)
+                {
+                    Invoke(nameof(GameOverPage), 1f);
+                }
+                tempArrow = null;
+            }
+        }
+    }
+
+    //public void CheckValidThrowOrNot()
+    //{
+
+    //    float dis = Vector3.Distance(distance.position, tempArrow.transform.position);
+    //    Debug.Log("bunss" + dis);
+    //    if (dis < 1f)
+    //    {            
+    //        tempArrow.ResetArrowPos();
+    //        tempArrow = null;
+    //    }
+    //    else
+    //    {
+    //        Debug.Log("is Remove");
+    //        allArrows.Remove(tempArrow);
+    //        Debug.Log("Arrow List Count: " + allArrows.Count);
+    //        tempArrow = null;
+    //    }
+    //}
+
+
     public void BowThrower(float forcePower)
     {
-        
+        tempArrow = currentArrow;
+        currentArrow.transform.position = currentArrow.ModelArrow.transform.position;
+        currentArrow.ModelArrow.localPosition = Vector3.zero;
         Vector3 force = currentArrow.transform.forward * forcePower;
         currentArrow.Thrower(force);
-        allArrows.Remove(currentArrow);
         UnAssignArrow();
-        if (allArrows.Count == 0)
-        {
-            Invoke(nameof(GameOverPage), 0.5f);
-        }
+        //Invoke(nameof(CheckValidThrowOrNot), 2f);
     }
 
     public void AddForceToArrow(Arrow arrow)
@@ -141,8 +206,8 @@ public class BowController : MonoBehaviour
     public Vector3 NearestPointOnLine(Vector3 linePoint, Vector3 lineDirection, Vector3 point)
     {
         lineDirection.Normalize();//this needs to be a unit vector
-        //var v = point - lineDirection;
-        //var d = Vector3.Dot(v, lineDirection);
+                                  //var v = point - lineDirection;
+                                  //var d = Vector3.Dot(v, lineDirection);
         return linePoint + Vector3.Project(point - linePoint, lineDirection);
         //return linePoint + lineDirection * d;
     }
