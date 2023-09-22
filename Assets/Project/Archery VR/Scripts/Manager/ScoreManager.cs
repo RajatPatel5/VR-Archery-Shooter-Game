@@ -1,93 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
-
-using TMPro;
 using System;
+using Yudiz.VRArchery.UI;
 
-public class ScoreManager : MonoBehaviour
+namespace Yudiz.VRArchery.Managers
 {
-    public static ScoreManager instance;
-    static string filePath;
-    int tempHighScore;
-    int tempCurrentScore;
-    public static int score;
-    public StoreScoreData scoreData;
 
-    public static event Action<int> OnScoreUpdate;
-
-    private void Awake()
+    public class ScoreManager : MonoBehaviour
     {
-        filePath = Application.persistentDataPath + "/VrArchery.fun";
-        instance = this;
-        LoadData();
-    }
+        public static ScoreManager instance;
+        static string filePath;
+        public int tempHighScore;
+        public int tempCurrentScore;
+        public int score;
+        public StoreScoreData scoreData;
+        //public static event Action<int> OnScoreUpdate;
 
-    public void AddScore(int points)
-    {
-        score += points;
-        OnScoreUpdate?.Invoke(score);
-        //CrystalMainMenu.text = Score.ToString();
-    }
-    
-
-    public void SaveData()
-    {
-        string jsonData = JsonUtility.ToJson(scoreData);
-        File.WriteAllText(filePath, jsonData);
-
-    }
-
-    public void LoadData()
-    {
-        if (File.Exists(filePath))
+        private void Awake()
         {
-            string jsonData = File.ReadAllText(filePath);
-            scoreData = JsonUtility.FromJson<StoreScoreData>(jsonData);
-            //BinaryFormatter formatter = new BinaryFormatter();
-            //FileStream stream = new FileStream(filePath, FileMode.Open);
-            //appData = formatter.Deserialize(stream) as AppData;
-            //stream.Close();
+            filePath = Application.persistentDataPath + "/VrArchery.fun";
+            instance = this;
+            LoadData();
         }
-        else
+
+        public void AddScore(int points)
         {
-            Debug.Log("No file Found");
+            score += points;
+            //OnScoreUpdate?.Invoke(score);
+            GameEvents.updateScore?.Invoke(score);
         }
-    }
 
-    public void CheckPlayerHighScore(GamePlayScreen gamePlayScreen)
-    {
-        tempHighScore = Convert.ToInt32(gamePlayScreen.HighScore.text);
-        tempCurrentScore = Convert.ToInt32(gamePlayScreen.currentScore.text);
 
-        if (tempCurrentScore > tempHighScore)
+        public void SaveData()
         {
-            gamePlayScreen.HighScore.text = gamePlayScreen.currentScore.text;
+            string jsonData = JsonUtility.ToJson(scoreData);
+            File.WriteAllText(filePath, jsonData);
+
         }
-        scoreData.HighScore = Convert.ToInt32(gamePlayScreen.HighScore.text);
-        SaveData();
+
+        public void LoadData()
+        {
+            if (File.Exists(filePath))
+            {
+                string jsonData = File.ReadAllText(filePath);
+                scoreData = JsonUtility.FromJson<StoreScoreData>(jsonData);
+                //BinaryFormatter formatter = new BinaryFormatter();
+                //FileStream stream = new FileStream(filePath, FileMode.Open);
+                //appData = formatter.Deserialize(stream) as AppData;
+                //stream.Close();
+            }
+            else
+            {
+                Debug.Log("No file Found");
+            }
+
+       }                
+       
     }
 
-    public void LoadHighScore(GamePlayScreen gamePlayScreen)
+    [Serializable]
+    public class StoreScoreData
     {
-        int resetCurrentScore = 0;
-        gamePlayScreen.HighScore.text = scoreData.HighScore.ToString();
-        gamePlayScreen.currentScore.text = resetCurrentScore.ToString();
-        score = resetCurrentScore;
+        public float HighScore;
     }
-
-    public void ConnectGamePlayAndGameOverScore(GameOverCanvas gameOver)
-    {
-       gameOver.yourScore.text = tempCurrentScore.ToString();
-       gameOver.HighScoreTillNow.text = tempHighScore.ToString();
-    }
-}
-
-[Serializable]
-public class StoreScoreData
-{
-    public float HighScore;
 }
 

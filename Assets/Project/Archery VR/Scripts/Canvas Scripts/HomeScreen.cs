@@ -2,24 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Yudiz.VRArchery.Managers;
 
-public class HomeScreen : BaseScreen
+namespace Yudiz.VRArchery.UI
 {
-    [SerializeField] Button playNowBtn;
-
-   [SerializeField] private BowController bow;
-
-    private void Start()
+    public class HomeScreen : BaseScreen
     {
-        playNowBtn.onClick.AddListener(GamePlayNow);
-    }
+        [SerializeField] Button playNowBtn;
 
-    void GamePlayNow()
-    {
-        ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);
-        bow.SpwanNewArrow();
-        //GamePlayScreen.inst.currentScore.text = "Score : " + 0;
-        ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());        
+        private void Start()
+        {
+            playNowBtn.onClick.AddListener(GamePlayNow);
+        }
+
+        void GamePlayNow()
+        {
+            ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
+            GameEvents.countDown?.Invoke();
+            GameEvents.onLoadingHighScore?.Invoke();
+            //ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());
+        }
     }
 
 }

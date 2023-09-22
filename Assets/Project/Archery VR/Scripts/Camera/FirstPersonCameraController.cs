@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class FirstPersonCameraController : MonoBehaviour
 {
-    [SerializeField] BowController arrowController;
+    //[SerializeField] BowController arrowController;
     [SerializeField] Transform playerBody;
     [SerializeField] float mouseSensitivity = 100f;   
     [SerializeField] float minAngle;

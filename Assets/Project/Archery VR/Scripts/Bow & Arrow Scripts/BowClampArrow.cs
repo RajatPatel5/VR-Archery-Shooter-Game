@@ -1,65 +1,67 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Yudiz.VRArchery.Managers;
 
-public class BowClampArrow : MonoBehaviour
+namespace Yudiz.VRArchery.CoreGameplay
 {
-    [SerializeField] BowController bow;
-    [SerializeField] private Transform startPoint;
-    [SerializeField] private Transform endPoint;
-    [SerializeField] private Transform movePoint;
-
-    private void Start()
+    public class BowClampArrow : MonoBehaviour
     {
+        [SerializeField] private Bow bow;
+        [SerializeField] private GameController gameController;
 
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log("IsTriggerEnter");
-        Arrow arrow = other.gameObject.GetComponent<Arrow>();
-        if (arrow)
+        private void Start()
         {
-            bow.AssignArrow(arrow);
-            arrow.xrGrabInteractable.trackRotation = false;
-        }
-    }
 
-    private void OnTriggerStay(Collider other)
-    {
-        Arrow arrow = other.gameObject.GetComponent<Arrow>();
-        if (bow.currentArrow == null) return;
-        if (bow.currentArrow == arrow)
+        }
+
+        private void OnTriggerEnter(Collider other)
         {
-            //arrow.xrGrabInteractable.trackRotation = false;
-            Debug.Log("IsTrigger Stay");
-            ArrowRotateTowardsBow();
-            movePoint.position = bow.NearestPointOnFiniteLine(startPoint.position, endPoint.position, bow.currentArrow.transform.position);
-            bow.UpdatePullingString(movePoint.localPosition);
-            Vector3 dir = startPoint.position - endPoint.position;
-            bow.currentArrow.ModelArrow.transform.position = bow.NearestPointOnLine(startPoint.position, dir, bow.currentArrow.ModelArrow.transform.position);
+            Arrow arrow = other.gameObject.GetComponent<Arrow>();
+            if (arrow)
+            {
+                //bow.trajectoryLine.enabled = true;
+                //gameController.AssignArrow(arrow);
+                arrow.xrGrabInteractable.trackRotation = false;
+            }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        Arrow arrow = other.gameObject.GetComponent<Arrow>();
-        if (bow.currentArrow == null) return;
-        if (bow.currentArrow == arrow)
+        private void OnTriggerStay(Collider other)
         {
-            bow.currentArrow.transform.position = bow.currentArrow.ModelArrow.transform.position;
-            bow.currentArrow.ModelArrow.localPosition = Vector3.zero;
-            arrow.xrGrabInteractable.trackRotation = true;
-            bow.UnAssignArrow();
-            Debug.Log("IsTriggerExit");
+            Arrow arrow = other.gameObject.GetComponent<Arrow>();
+            if (gameController.currentArrow == null) return;
+            if (gameController.currentArrow == arrow)
+            {
+                //Debug.Log("IsTrigger Stay");
+                ArrowRotateTowardsBow();
+                bow.pointBetweenStartAndEnd.position = gameController.NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, gameController.currentArrow.transform.position);
+                bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
+                var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
+                gameController.currentArrow.ModelArrow.transform.position = gameController.NearestPointOnLine(bow.arrowStartPoint.position, dir, gameController.currentArrow.ModelArrow.transform.position);
+                gameController.forcePower = gameController.PullValue();
+                //bow.CalculateTrajectory(gameController.forcePower, bow.trajectoryLine, other.GetComponent<Rigidbody>());
+            }
         }
-    }
 
-    void ArrowRotateTowardsBow()
-    {
-        Quaternion desiredRotation = Quaternion.LookRotation(bow.transform.forward, Vector3.up);
-        float lerpSpeed = 0.8f;
-        bow.currentArrow.transform.rotation = Quaternion.Lerp(bow.currentArrow.transform.rotation, desiredRotation, lerpSpeed);
+        private void OnTriggerExit(Collider other)
+        {
+            Arrow arrow = other.gameObject.GetComponent<Arrow>();
+            if (gameController.currentArrow == null) return;
+            if (gameController.currentArrow == arrow)
+            {
+                bow.trajectoryLine.enabled = false;
+                gameController.currentArrow.transform.position = gameController.currentArrow.ModelArrow.transform.position;
+                gameController.currentArrow.ModelArrow.localPosition = Vector3.zero;
+                arrow.xrGrabInteractable.trackRotation = true;
+                //gameController.UnAssignArrow();
+                //Debug.Log("IsTriggerExit");
+            }
+        }
+
+        void ArrowRotateTowardsBow()
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(bow.transform.forward, Vector3.up);
+            float lerpSpeed = 0.8f;
+            gameController.currentArrow.transform.rotation = Quaternion.Lerp(gameController.currentArrow.transform.rotation, desiredRotation, lerpSpeed);
+        }
     }
 }
 

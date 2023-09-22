@@ -24,8 +24,9 @@ public class GameStateManager : MonoBehaviour
     public enum GameStates
     {
         HomeScreen,            
-        GameOver,
         GamePlay,
+        GameOver,
+        countDown,
     }
 
 

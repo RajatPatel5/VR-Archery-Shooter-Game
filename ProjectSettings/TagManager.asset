@@ -10,6 +10,8 @@ TagManager:
   - Ground
   - Table
   - Wall
+  - Ignite
+  - Lamp
   layers:
   - Default
   - TransparentFX

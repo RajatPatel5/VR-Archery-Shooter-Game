@@ -1,13 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Yudiz.VRArchery.Managers;
 
-public class ScoreOnCube : MonoBehaviour
+namespace Yudiz.VRArchery.CoreGameplay
 {
-    [SerializeField] int itsScore;
 
-    public void UpdateScore()
+    public class ScoreOnCube : MonoBehaviour
     {
-        ScoreManager.instance.AddScore(itsScore);
+        [SerializeField] int itsScore;
+
+        public void UpdateScore()
+        {
+            ScoreManager.instance.AddScore(itsScore);
+        }
     }
 }

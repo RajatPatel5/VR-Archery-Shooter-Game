@@ -1,37 +1,65 @@
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
+using Yudiz.VRArchery.Managers;
+using System;
 
-public class GameOverCanvas : BaseScreen
-{    
-    public Button MainMenuButton;
-    public Button RestartGameButton;
-    public TMP_Text yourScore;
-    public TMP_Text HighScoreTillNow;
-    [SerializeField] private BowController bow;
-
-    //private void Awake()
-    //{
-    //    inst = this;
-    //}
-
-    private void Start()
+namespace Yudiz.VRArchery.UI
+{
+    public class GameOverCanvas : BaseScreen
     {
-        MainMenuButton.onClick.AddListener(BackHomeScreen);
-        RestartGameButton.onClick.AddListener(RestartGame);
-    }
-    
-    void BackHomeScreen()
-    {
-        ScreenManager.instance.ShowNextScreen(ScreenType.HomeScreen);
-        //SaveManager.instance.CrystalsaveData();
-    }
+        public Button MainMenuButton;
+        public Button RestartGameButton;
+        public TMP_Text yourScore;
+        public TMP_Text HighScoreTillNow;
 
-    public void RestartGame()
-    {
-        ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);
-        bow.SpwanNewArrow();
-        Debug.Log("is Working And Reset");
-        ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());
+        private void Start()
+        {
+            MainMenuButton.onClick.AddListener(BackHomeScreen);
+            RestartGameButton.onClick.AddListener(RestartGame);
+        }
+
+        private void OnEnable()
+        {
+            GameEvents.onGameOver += OnGameOver;
+        }
+
+        private void OnDisable()
+        {
+            GameEvents.onGameOver -= OnGameOver;
+        }
+
+        void BackHomeScreen()
+        {
+            ScreenManager.instance.ShowNextScreen(ScreenType.HomeScreen);
+        }
+
+        public void RestartGame()
+        {
+            ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
+            GameEvents.countDown?.Invoke();
+            GameEvents.onLoadingHighScore?.Invoke();
+            //ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());
+        }
+
+        public void OnGameOver()
+        {
+            //ScoreManager.instance.ConnectGamePlayAndGameOverScore(this);
+            yourScore.text = ScoreManager.instance.tempCurrentScore.ToString();
+            HighScoreTillNow.text = ScoreManager.instance.tempHighScore.ToString();
+
+
+            //ScoreManager.instance.CheckPlayerHighScore(this);
+
+
+            if (ScoreManager.instance.tempCurrentScore > ScoreManager.instance.tempHighScore)
+            {
+                HighScoreTillNow.text = yourScore.text;
+            }
+            ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(HighScoreTillNow.text);
+            ScoreManager.instance.SaveData();
+        }
     }
 }
+
+
