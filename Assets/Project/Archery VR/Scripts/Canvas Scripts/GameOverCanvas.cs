@@ -54,9 +54,12 @@ namespace Yudiz.VRArchery.UI
 
             if (ScoreManager.instance.tempCurrentScore > ScoreManager.instance.tempHighScore)
             {
-                HighScoreTillNow.text = yourScore.text;
+                ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(yourScore.text);
             }
-            ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(HighScoreTillNow.text);
+            else
+            {
+                ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(HighScoreTillNow.text);
+            }
             ScoreManager.instance.SaveData();
         }
     }

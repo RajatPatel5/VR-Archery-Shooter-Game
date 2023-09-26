@@ -8,8 +8,14 @@ namespace Yudiz.VRArchery.Managers
 
     public class GameController : MonoBehaviour
     {
-
+        #region PUBLIC_VARS
         public static GameController inst;
+        public bool canThrowArrow;
+        public Arrow tempArrow;
+        public Arrow currentArrow;
+        #endregion
+
+        #region PRIVATE_VARS
         [Header("Bow Area")]
         [SerializeField] private Bow bow;
 
@@ -18,9 +24,7 @@ namespace Yudiz.VRArchery.Managers
         [SerializeField] private List<Transform> spwanArrowPoint;
         [SerializeField] private List<Arrow> allArrows;
         [SerializeField] private Transform distance;
-        public bool canThrowArrow;
-        public Arrow tempArrow;
-        public Arrow currentArrow;
+
 
         [Header("Arrow Force Area")]
         public float forcePower;
@@ -29,6 +33,13 @@ namespace Yudiz.VRArchery.Managers
         [SerializeField] private float enterRange;
         [SerializeField] private float exitRange;
         [SerializeField] private bool isSnap;
+        #endregion
+
+        #region UNITY_CALLBACKS
+        private void Awake()
+        {
+            inst = this;
+        }
 
         private void OnEnable()
         {
@@ -48,23 +59,10 @@ namespace Yudiz.VRArchery.Managers
             GameEvents.spwanArrow -= SpwanNewArrow;
         }
 
-        private void Awake()
-        {
-            inst = this;
-        }
-
-        public void GameOverPage()
-        {
-            ScreenManager.instance.ShowNextScreen(ScreenType.GameOverPage);
-            GameEvents.onGameOver?.Invoke();
-        }
 
         private void Update()
         {
-            if (currentArrow == null)
-            {
-                return;
-            }
+            if (currentArrow == null) return;
 
             float distance = Vector3.Distance(currentArrow.transform.position, bow.pointBetweenStartAndEnd.transform.position);
             if (distance < enterRange)
@@ -90,44 +88,15 @@ namespace Yudiz.VRArchery.Managers
                 }
             }
         }
+        #endregion
 
-        void SnapIn()
+        #region PUBLIC_FUNCTIONS
+        public void GameOverPage()
         {
-            ArrowRotateTowardsBow();
-
-            bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
-            bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
-
-            var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
-            currentArrow.ModelArrow.transform.position = NearestPointOnLine(bow.arrowStartPoint.position, dir, currentArrow.ModelArrow.transform.position);
-
-            currentArrow.xrGrabInteractable.trackRotation = false;
-            bow.trajectoryLine.enabled = true;
-
-            float force = PullValue();
-            //bow.CalculateTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
-            bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
-
-            tempArrow = currentArrow;
-            canThrowArrow = true;
+            ScreenManager.instance.ShowNextScreen(ScreenType.GameOverPage);
+            GameEvents.onGameOver?.Invoke();
         }
 
-        void SnapOut()
-        {
-            bow.trajectoryLine.enabled = false;
-            currentArrow.xrGrabInteractable.trackRotation = true;
-            currentArrow.transform.position = currentArrow.ModelArrow.transform.position;
-            currentArrow.ModelArrow.localPosition = Vector3.zero;
-            ResetBowString();
-            canThrowArrow = false;
-        }
-
-        void ArrowRotateTowardsBow()
-        {
-            Quaternion desiredRotation = Quaternion.LookRotation(bow.transform.forward, Vector3.up);
-            float lerpSpeed = 0.8f;
-            currentArrow.transform.rotation = Quaternion.Lerp(currentArrow.transform.rotation, desiredRotation, lerpSpeed);
-        }
 
 
         public void SpwanNewArrow()
@@ -139,21 +108,6 @@ namespace Yudiz.VRArchery.Managers
             }
         }
 
-        //public void AssignArrow(Arrow arrow)
-        //{
-        //    currentArrow = arrow;
-        //}
-
-        //public void UnAssignArrow()
-        //{
-        //    currentArrow = null;
-        //    Invoke(nameof(ResetBowString), 0.3f);
-        //}
-
-        private void ResetBowString()
-        {
-            bow.ResetStringPos();
-        }
 
         public void CheckValidThrowOrNot(Arrow arrow)
         {
@@ -181,18 +135,6 @@ namespace Yudiz.VRArchery.Managers
         }
 
 
-        //public void AddForceToArrow(Arrow arrow)
-        //{
-        //    if (currentArrow == arrow)
-        //    {
-        //        forcePower = PullValue();
-        //        //tempArrow = currentArrow;
-        //        //forcePower = PullValue();
-        //        bow.BowThrower(forcePower, currentArrow);
-        //        //UnAssignArrow();
-        //        ResetBowString();
-        //    }
-        //}
 
         public void AddForceToArrow()
         {
@@ -245,12 +187,130 @@ namespace Yudiz.VRArchery.Managers
             return linePoint + Vector3.Project(point - linePoint, lineDirection);
             //return linePoint + lineDirection * d;
         }
+        #endregion
 
+        #region PRIVATE_FUNCTIONS
+        void SnapIn()
+        {
+            ArrowRotateTowardsBow();
 
+            bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
+            bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
 
+            var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
+            currentArrow.ModelArrow.transform.position = NearestPointOnLine(bow.arrowStartPoint.position, dir, currentArrow.ModelArrow.transform.position);
+
+            currentArrow.xrGrabInteractable.trackRotation = false;
+            bow.trajectoryLine.enabled = true;
+
+            float force = PullValue();
+            //bow.CalculateTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
+            bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
+
+            tempArrow = currentArrow;
+            canThrowArrow = true;
+        }
+
+        void SnapOut()
+        {
+            bow.trajectoryLine.enabled = false;
+            currentArrow.xrGrabInteractable.trackRotation = true;
+            currentArrow.transform.position = currentArrow.ModelArrow.transform.position;
+            currentArrow.ModelArrow.localPosition = Vector3.zero;
+            ResetBowString();
+            canThrowArrow = false;
+        }
+
+        void ArrowRotateTowardsBow()
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(bow.transform.forward, Vector3.up);
+            float lerpSpeed = 0.8f;
+            currentArrow.transform.rotation = Quaternion.Lerp(currentArrow.transform.rotation, desiredRotation, lerpSpeed);
+        }
+
+        private void ResetBowString()
+        {
+            bow.ResetStringPos();
+        }
+        #endregion
+
+        #region CO-ROUTINES
+        #endregion
+
+        #region EVENT_HANDLERS
+        #endregion
+
+        #region UI_CALLBACKS
+        #endregion
     }
 }
 
+#region COMMENTS-REGION
+//public void AssignArrow(Arrow arrow)
+//{
+//    currentArrow = arrow;
+//}
+
+//public void UnAssignArrow()
+//{
+//    currentArrow = null;
+//    Invoke(nameof(ResetBowString), 0.3f);
+
+//}
+
+//private float Remap(float value, int fromMin, float fromMax, int toMin, int toMax)
+//{
+//    return (value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin;
+//}
+//if (audioSource.isPlaying == false && strength <= 0.01f)
+//{
+//    audioSource.Play();
+//}
+
+//private void PlayStringPullinSound()
+//{
+//    //Check if we have moved the string enought to play the sound unpause it
+//    if (Mathf.Abs(strength - previousStrength) > stringSoundThreshold)
+//    {
+//        if (strength < previousStrength)
+//        {
+//            //Play string sound in reverse if we are pusing the string towards the bow
+//            audioSource.pitch = -1;
+//        }
+//        else
+//        {
+//            //Play the sound normally
+//            audioSource.pitch = 1;
+//        }
+//        audioSource.UnPause();
+//    }
+//    else
+//    {
+//        //if we stop moving Pause the sounds
+//        audioSource.Pause();
+//    }
+
+//}
+
+
+
+
+
+
+
+
+//public void AddForceToArrow(Arrow arrow)
+//{
+//    if (currentArrow == arrow)
+//    {
+//        forcePower = PullValue();
+//        //tempArrow = currentArrow;
+//        //forcePower = PullValue();
+//        bow.BowThrower(forcePower, currentArrow);
+//        //UnAssignArrow();
+//        ResetBowString();
+//    }
+//}
 //public void UpdatePullingString(Vector3 updatedString)
 //{
 //    Vector3 linePosition = updatedString;
@@ -346,3 +406,4 @@ namespace Yudiz.VRArchery.Managers
 //    ResetPos();
 //    forcePower = 0f;
 //}
+#endregion
