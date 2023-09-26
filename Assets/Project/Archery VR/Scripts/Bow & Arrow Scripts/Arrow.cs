@@ -133,6 +133,12 @@ namespace Yudiz.VRArchery.CoreGameplay
             GameController.inst.currentArrow = null;
         }
 
+        [ContextMenu("THis Arrow ")]
+        private void TakeThisArrow()
+        {
+            GameController.inst.currentArrow = this;
+        }
+
         private void SetPhysics(bool usePhysics)
         {
             arrowRB.useGravity = usePhysics;

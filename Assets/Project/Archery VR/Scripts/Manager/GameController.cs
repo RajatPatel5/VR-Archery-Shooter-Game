@@ -64,6 +64,9 @@ namespace Yudiz.VRArchery.Managers
         {
             if (currentArrow == null) return;
 
+            //bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
+            //bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
+
             float distance = Vector3.Distance(currentArrow.transform.position, bow.pointBetweenStartAndEnd.transform.position);
             if (distance < enterRange)
             {
@@ -198,7 +201,8 @@ namespace Yudiz.VRArchery.Managers
             bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
 
             var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
-            currentArrow.ModelArrow.transform.position = NearestPointOnLine(bow.arrowStartPoint.position, dir, currentArrow.ModelArrow.transform.position);
+            //currentArrow.ModelArrow.transform.position = NearestPointOnLine(bow.pointBetweenStartAndEnd.position, dir, currentArrow.ModelArrow.transform.position);
+            currentArrow.ModelArrow.transform.position = bow.pointBetweenStartAndEnd.position;
 
             currentArrow.xrGrabInteractable.trackRotation = false;
             bow.trajectoryLine.enabled = true;
