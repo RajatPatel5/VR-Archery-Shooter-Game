@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using Yudiz.VRArchery.Managers;
 
 namespace Yudiz.VRArchery.CoreGameplay
 {
@@ -12,6 +13,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         public Transform arrowEndPoint;
         public Transform pointBetweenStartAndEnd;
         public LineRenderer trajectoryLine;
+        public bool isGrabingBow;
         #endregion
 
         #region PRIVATE_VARS
@@ -19,7 +21,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         private Vector3 initialPos;
         private Quaternion initialRotation;
         [SerializeField] private LineRenderer bowString;
-        //[SerializeField] private LineRenderer bowString2;
+        //[SerializeField] private float speed;
         [SerializeField] private XRGrabInteractable xrGrabInteractable;
         [SerializeField] private Rigidbody bowRigidbody;
         [SerializeField] private float gravity = 9.8f;
@@ -28,6 +30,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         #region UNITY_CALLBACKS
         private void Start()
         {
+            isGrabingBow = false;
             trajectoryLine.enabled = false;
             initialArrowPos = pointBetweenStartAndEnd.localPosition;
             initialPos = transform.position;
@@ -42,7 +45,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         {
             arrow.transform.position = arrow.ModelArrow.transform.position;
             arrow.ModelArrow.localPosition = Vector3.zero;
-            Vector3 force = arrow.transform.forward * forcePower;
+            Vector3 force = forcePower * arrow.transform.forward;
             arrow.Thrower(force);
             trajectoryLine.enabled = false;
             //UnAssignArrow();
@@ -60,6 +63,67 @@ namespace Yudiz.VRArchery.CoreGameplay
             bowString.SetPosition(1, linePosition);
             //bowString2.SetPosition(1, linePosition);
         }
+        //Vector3 point;
+        public void DrawProjection(float intialForce, LineRenderer line, Rigidbody rb)
+        {
+            int resolution = 100;
+            float TimeBetweenPoints = 0.1f;
+            Transform ReleasePosition = transform;
+
+            line.positionCount = Mathf.CeilToInt(resolution / TimeBetweenPoints) + 1;
+            Vector3 startPosition = ReleasePosition.position;
+            Vector3 startVelocity = intialForce * transform.forward / rb.mass;
+            int i = 0;
+            line.SetPosition(i, startPosition);
+
+            List<Vector3> points = new List<Vector3>();
+            Vector3 previousPosition = transform.position;
+
+            //bool hasHit = false;
+
+            for (float time = 0; time < resolution; time += TimeBetweenPoints)
+            {
+                i++;
+                Vector3 point = startPosition + time * startVelocity;
+                point.y = startPosition.y + startVelocity.y * time + (Physics.gravity.y / 2f * time * time);
+                float dis = Vector3.Distance(previousPosition, point);
+                //line.SetPosition(i, point);
+                points.Add(point);
+                if (dis > 4)
+                {
+                    line.positionCount = i;
+                    line.SetPositions(points.ToArray());
+                    break;
+                }
+
+                line.SetPosition(i, point);
+            }
+            //line.positionCount = i;
+            //line.SetPositions(points.ToArray());
+            //line.SetPosition(i, point);
+
+
+        }
+        //line.positionCount = (int)(timeOfFlight / timeStep);
+        //Material lineMat = line.material;
+        //RaycastHit hit;
+        //if (Physics.Raycast(previousPosition, point - previousPosition, out hit, Vector3.Distance(previousPosition, point)))
+        //{
+        //    if (hit.collider.GetComponent<Enemy>() != null)
+        //    {
+        //        lineMat.SetColor("_BaseColor", Color.green);
+        //    }
+        //    else
+        //    {
+        //        lineMat.SetColor("_BaseColor", Color.white);
+        //    }
+        //    hasHit = true;
+        //    points.Add(point);
+        //}
+        //else
+        //    points.Add(point);
+        //// Update the previous position
+        //previousPosition = point;        
 
         public void CalculateHalfTrajectory(float initialForce, LineRenderer line, Rigidbody rb)
         {
@@ -105,16 +169,24 @@ namespace Yudiz.VRArchery.CoreGameplay
         private void OnLeavingBOwCall(SelectExitEventArgs arg0)
         {
             bowRigidbody.isKinematic = false;
+            arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
             Invoke(nameof(ResetBowPos), 0.3f);
         }
 
         private void OnGrabingBow(SelectEnterEventArgs arg0)
         {
             bowRigidbody.isKinematic = true;
+            isGrabingBow = true;
+            if (arg0.interactorObject is XRDirectInteractor)
+            {
+                arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
+            }
         }
 
         void ResetBowPos()
         {
+            bowRigidbody.isKinematic = true;
+            isGrabingBow = false;
             transform.SetPositionAndRotation(initialPos, initialRotation);
         }
         #endregion

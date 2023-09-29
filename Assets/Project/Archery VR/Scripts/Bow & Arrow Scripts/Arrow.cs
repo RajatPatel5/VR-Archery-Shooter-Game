@@ -18,6 +18,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         public ParticleSystem trailParticle;
         public ParticleSystem hitParticle;
         public TrailRenderer trailRenderer;
+        public TrailRenderer modelTrialRenderer;
         //public static event Action<Arrow> OnThisArrowAddForce;
         //public static event Action<Arrow> OnCollisionShouldResetOrNot;
         #endregion
@@ -37,6 +38,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         private void Start()
         {
             isColliding = true;
+            modelTrialRenderer.enabled = false;
             initialPosition = transform.position;
             initialRotation = transform.rotation;
             //frontCollider = GetComponent<BoxCollider>();
@@ -61,26 +63,23 @@ namespace Yudiz.VRArchery.CoreGameplay
             ScoreOnCube score = collision.collider.GetComponent<ScoreOnCube>();            
             if (score)
             {
-                score.UpdateScore();
-                //arrowRB.isKinematic = true;
+                score.UpdateScore();                
                 SetPhysics(false);
-                //collision.collider.ClosestPoint(transform.position); 
-                isColliding = false;
+                //isReadyToThrow = false;
+                //arrowRB.velocity = Vector3.zero;
+                //GameController.inst.tempArrow = null;
+                GameController.inst.allArrows.Remove(this);
+                GameController.inst.CheckGameOver();
+                //Destroy(gameObject, 10);
+                //isColliding = false;
                 ArrowParticles(false);
-            }
-
-            //else if (collision.collider.CompareTag("Table"))
-            //{
-            //    isReadyToThrow = false;
-            //    arrowRB.velocity = Vector3.zero;
-            //    isColliding = false;
-            //}
+            }       
 
             else if (collision.collider.CompareTag("Ground"))
             {
                 Debug.Log("is Grounded");
-                isReadyToThrow = false;
                 ArrowParticles(false);
+                isReadyToThrow = false;
                 arrowRB.velocity = Vector3.zero;
                 isColliding = false;
             }
@@ -114,23 +113,25 @@ namespace Yudiz.VRArchery.CoreGameplay
         }      
 
         private void OnGrabingArrow(SelectEnterEventArgs arg0)
-        {
-
-            //arrowRB.isKinematic = true;
+        {            
             SetPhysics(false);
             isReadyToThrow = false;
-            isColliding = true;       
+            isColliding = true;
             xrGrabInteractable.trackRotation = true;
             GameController.inst.currentArrow = this;
+            if (arg0.interactorObject is XRDirectInteractor)
+            {
+                arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
+            }
         }
 
         private void OnLeavingArrowCall(SelectExitEventArgs arg0)
-        {            
-            //arrowRB.isKinematic = false;
+        {
             SetPhysics(true);
             CheckThrowable();
             xrGrabInteractable.trackRotation = true;
             GameController.inst.currentArrow = null;
+            arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
         }
 
         [ContextMenu("THis Arrow ")]
@@ -169,12 +170,7 @@ namespace Yudiz.VRArchery.CoreGameplay
             transform.SetPositionAndRotation(initialPosition, initialRotation);
             isColliding = true;
         }
-
-        public void ArrorDestroyer()
-        {
-            Destroy(gameObject, 5f);
-        }
-
+        
         public void Thrower(Vector3 force)
         {
             //trialLine.enabled = true;
@@ -182,6 +178,7 @@ namespace Yudiz.VRArchery.CoreGameplay
             SetPhysics(true);            
             arrowRB.AddForce(force, ForceMode.Impulse);
             isReadyToThrow = true;
+            modelTrialRenderer.enabled = true;
             //dropByMistake = false;
             //ArrorDestroyer();
         }

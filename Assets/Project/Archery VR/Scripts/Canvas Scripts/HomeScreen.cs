@@ -17,8 +17,8 @@ namespace Yudiz.VRArchery.UI
 
         void GamePlayNow()
         {
-            ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
-            GameEvents.countDown?.Invoke();
+            ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);            
+            GameEvents.spwanArrow?.Invoke();
             GameEvents.onLoadingHighScore?.Invoke();
             //ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());
         }

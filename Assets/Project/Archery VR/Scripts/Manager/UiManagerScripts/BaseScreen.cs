@@ -22,6 +22,5 @@ public enum ScreenType
 {
     HomeScreen,
     GameOverPage,
-    GamePlayCanvas,
-    CountDownCanvas,
+    GamePlayCanvas,    
 }

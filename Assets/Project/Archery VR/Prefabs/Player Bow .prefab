@@ -509,7 +509,6 @@ MonoBehaviour:
   pointBetweenStartAndEnd: {fileID: 5218181933541889594}
   trajectoryLine: {fileID: 446248751897672254}
   bowString: {fileID: 4694614827808814156}
-  bowString2: {fileID: 0}
   xrGrabInteractable: {fileID: 6577202057683377033}
   bowRigidbody: {fileID: 1531932420403871301}
   gravity: 9.8

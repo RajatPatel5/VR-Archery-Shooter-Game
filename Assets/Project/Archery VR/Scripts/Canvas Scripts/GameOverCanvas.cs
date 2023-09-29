@@ -36,8 +36,10 @@ namespace Yudiz.VRArchery.UI
 
         public void RestartGame()
         {
-            ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
-            GameEvents.countDown?.Invoke();
+            //ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
+            //GameEvents.countDown?.Invoke();
+            ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);
+            GameEvents.spwanArrow?.Invoke();
             GameEvents.onLoadingHighScore?.Invoke();
             //ScoreManager.instance.LoadHighScore(ScreenManager.instance.screens[1].GetComponent<GamePlayScreen>());
         }
@@ -55,6 +57,7 @@ namespace Yudiz.VRArchery.UI
             if (ScoreManager.instance.tempCurrentScore > ScoreManager.instance.tempHighScore)
             {
                 ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(yourScore.text);
+                HighScoreTillNow.text = yourScore.text;
             }
             else
             {

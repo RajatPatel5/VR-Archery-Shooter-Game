@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Yudiz.VRArchery.CoreGameplay;
@@ -13,6 +14,7 @@ namespace Yudiz.VRArchery.Managers
         public bool canThrowArrow;
         public Arrow tempArrow;
         public Arrow currentArrow;
+        public AsteroidData asteroidData;
         #endregion
 
         #region PRIVATE_VARS
@@ -20,9 +22,9 @@ namespace Yudiz.VRArchery.Managers
         [SerializeField] private Bow bow;
 
         [Header("Spwan Arrows List And its Pos")]
+        public List<Arrow> allArrows;
         [SerializeField] private Arrow arrowPrefab;
         [SerializeField] private List<Transform> spwanArrowPoint;
-        [SerializeField] private List<Arrow> allArrows;
         [SerializeField] private Transform distance;
 
 
@@ -33,6 +35,7 @@ namespace Yudiz.VRArchery.Managers
         [SerializeField] private float enterRange;
         [SerializeField] private float exitRange;
         [SerializeField] private bool isSnap;
+        private bool isGameOn = false;
         #endregion
 
         #region UNITY_CALLBACKS
@@ -59,36 +62,47 @@ namespace Yudiz.VRArchery.Managers
             GameEvents.spwanArrow -= SpwanNewArrow;
         }
 
-
+        private void Start()
+        {            
+            isGameOn = true;
+            //SpawnRandomAsteroid();
+            StartCoroutine(GenerateAsteroids());
+        }
         private void Update()
         {
             if (currentArrow == null) return;
+            if (bow.isGrabingBow)
+            {
+                //bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
+                //bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
 
-            //bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
-            //bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
-
-            float distance = Vector3.Distance(currentArrow.transform.position, bow.pointBetweenStartAndEnd.transform.position);
-            if (distance < enterRange)
-            {
-                isSnap = true;
-                SnapIn();
-            }
-            else if (distance > exitRange)
-            {
-                isSnap = false;
-                SnapOut();
-                //UnAssignArrow();
-            }
-            else if (distance < exitRange)
-            {
-                if (isSnap)
+                float distance = Vector3.Distance(currentArrow.transform.position, bow.pointBetweenStartAndEnd.transform.position);
+                if (distance < enterRange)
                 {
+                    isSnap = true;
                     SnapIn();
                 }
-                else
+                else if (distance > exitRange)
                 {
+                    isSnap = false;
                     SnapOut();
+                    //UnAssignArrow();
                 }
+                else if (distance < exitRange)
+                {
+                    if (isSnap)
+                    {
+                        SnapIn();
+                    }
+                    else
+                    {
+                        SnapOut();
+                    }
+                }
+            }
+            else
+            {
+                SnapOut();
             }
         }
         #endregion
@@ -127,17 +141,20 @@ namespace Yudiz.VRArchery.Managers
                 {
                     Debug.Log("is Remove");
                     allArrows.Remove(arrow);
-                    arrow.ArrorDestroyer();
-                    if (allArrows.Count == 0)
-                    {
-                        Invoke(nameof(GameOverPage), 1f);
-                    }
+                    Destroy(arrow, 5);
+                    CheckGameOver();
                     tempArrow = null;
                 }
             }
         }
 
-
+        public void CheckGameOver()
+        {
+            if (allArrows.Count == 0)
+            {
+                Invoke(nameof(GameOverPage), 1f);
+            }
+        }
 
         public void AddForceToArrow()
         {
@@ -190,6 +207,31 @@ namespace Yudiz.VRArchery.Managers
             return linePoint + Vector3.Project(point - linePoint, lineDirection);
             //return linePoint + lineDirection * d;
         }
+
+        private void SpawnRandomAsteroid()
+        {
+            float xPos1 = Random.Range(asteroidData.asteroidXPos.x, asteroidData.asteroidXPos.y);
+            float xpos2 = Random.Range(asteroidData.asteroidXPos2.x, asteroidData.asteroidXPos2.y);
+            float yPos = Random.Range(asteroidData.asteroidYPos.x, asteroidData.asteroidYPos.y);
+            float zPos = Random.Range(asteroidData.asteroidZPos.x, asteroidData.asteroidZPos.y);
+
+            List<float> tempList = new();
+            tempList.Add(xpos2);
+            tempList.Add(xPos1);
+
+            int xPos = Random.Range(0, tempList.Count);
+            AsteriodItem asteriod = ObstaclePoolManager.Instance.RequestAsteriods().GetComponent<AsteriodItem>();
+            asteriod.gameObject.transform.localPosition = new Vector3(tempList[xPos], yPos, zPos);
+            asteriod.launched = true;
+
+            //tempList = null;
+            //tempList = null;
+            //if (Time.time >= levelChangeTime)
+            //{
+            //    Debug.Log("LevelChanging");d
+            //    ChangeAsteroidData();
+            //}
+        }                
         #endregion
 
         #region PRIVATE_FUNCTIONS
@@ -200,7 +242,7 @@ namespace Yudiz.VRArchery.Managers
             bow.pointBetweenStartAndEnd.position = NearestPointOnFiniteLine(bow.arrowStartPoint.position, bow.arrowEndPoint.position, currentArrow.transform.position);
             bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
 
-            var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
+            //var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
             //currentArrow.ModelArrow.transform.position = NearestPointOnLine(bow.pointBetweenStartAndEnd.position, dir, currentArrow.ModelArrow.transform.position);
             currentArrow.ModelArrow.transform.position = bow.pointBetweenStartAndEnd.position;
 
@@ -209,7 +251,8 @@ namespace Yudiz.VRArchery.Managers
 
             float force = PullValue();
             //bow.CalculateTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
-            bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
+            //bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
+            bow.DrawProjection(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
 
             tempArrow = currentArrow;
             canThrowArrow = true;
@@ -239,6 +282,31 @@ namespace Yudiz.VRArchery.Managers
         #endregion
 
         #region CO-ROUTINES
+        public IEnumerator GenerateAsteroids()
+        {
+            //while(true)
+            //{
+            //SpawnRandomAsteroid();
+            //yield return new WaitForSeconds(SetRandomAsteroidSpawnTime());
+            //Debug.Log("SPwaning");
+            //}
+            //yield return null;
+            while (isGameOn)
+            {
+                SpawnRandomAsteroid();
+                
+                yield return new WaitForSeconds(SetRandomAsteroidSpawnTime());
+            }
+            //yield return new WaitForSeconds(asteroidData.timeForSpawningAsteroids);                
+
+            //StartCoroutine(GenerateAsteroids());
+        }
+
+        private float SetRandomAsteroidSpawnTime()
+        {
+            float spawnTime = Random.Range(asteroidData.asteroidSpawnTime.x, asteroidData.asteroidSpawnTime.y);
+            return spawnTime;
+        }
         #endregion
 
         #region EVENT_HANDLERS
@@ -246,6 +314,17 @@ namespace Yudiz.VRArchery.Managers
 
         #region UI_CALLBACKS
         #endregion
+    }
+
+    [System.Serializable]
+    public class AsteroidData
+    {
+        public Vector2 asteroidXPos;
+        public Vector2 asteroidXPos2;
+        public Vector2 asteroidYPos;
+        public Vector2 asteroidZPos;
+        public Vector2 asteroidSpeed;
+        public Vector2 asteroidSpawnTime;
     }
 }
 
