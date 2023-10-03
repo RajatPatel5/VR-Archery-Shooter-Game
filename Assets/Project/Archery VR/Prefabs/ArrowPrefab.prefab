@@ -10070,7 +10070,7 @@ Transform:
   m_GameObject: {fileID: 3775490305849227914}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.169}
+  m_LocalPosition: {x: 0, y: 0.003, z: -0.167}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -10266,7 +10266,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 1}
+      maxColor: {r: 0, g: 0.99166536, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -14832,7 +14832,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f59ff948dd268b549876bb7958eed0b2, type: 2}
+  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -14904,7 +14904,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f59ff948dd268b549876bb7958eed0b2, type: 2}
+  - {fileID: 2100000, guid: c1e785f4ca2275348a09e450b3bcb37e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15303,8 +15303,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.012
-  m_Center: {x: 0, y: 0, z: 0.48}
+  m_Radius: 0.0092256805
+  m_Center: {x: 0, y: 0.0025058552, z: 0.48}
 --- !u!65 &3099786881999096725
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15324,8 +15324,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.008021496, y: 0.0059204935, z: 0.37669215}
-  m_Center: {x: 0, y: -0.0012070921, z: 0.23459618}
+  m_Size: {x: 0.008021496, y: 0.011856822, z: 0.37669215}
+  m_Center: {x: 0, y: -0.00028352832, z: 0.23459618}
 --- !u!96 &4250006195659369921
 TrailRenderer:
   serializedVersion: 3
@@ -15386,8 +15386,8 @@ TrailRenderer:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.9916201
-        value: 0
+        time: 1
+        value: 0.1639274
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -15436,7 +15436,7 @@ TrailRenderer:
     generateLightingData: 1
   m_MinVertexDistance: 0.5
   m_MaskInteraction: 0
-  m_Autodestruct: 1
+  m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
 --- !u!1 &8217832057280630865

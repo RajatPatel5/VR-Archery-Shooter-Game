@@ -89,7 +89,7 @@ namespace Yudiz.VRArchery.CoreGameplay
                 float dis = Vector3.Distance(previousPosition, point);
                 //line.SetPosition(i, point);
                 points.Add(point);
-                if (dis > 4)
+                if (dis > 3)
                 {
                     line.positionCount = i;
                     line.SetPositions(points.ToArray());
@@ -169,7 +169,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         private void OnLeavingBOwCall(SelectExitEventArgs arg0)
         {
             bowRigidbody.isKinematic = false;
-            arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
+            //arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(true);
             Invoke(nameof(ResetBowPos), 0.3f);
         }
 
@@ -177,10 +177,10 @@ namespace Yudiz.VRArchery.CoreGameplay
         {
             bowRigidbody.isKinematic = true;
             isGrabingBow = true;
-            if (arg0.interactorObject is XRDirectInteractor)
-            {
-                arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
-            }
+            //if (arg0.interactorObject is XRDirectInteractor)
+            //{
+            //    arg0.interactorObject.transform.GetChild(0).gameObject.SetActive(false);
+            //}
         }
 
         void ResetBowPos()

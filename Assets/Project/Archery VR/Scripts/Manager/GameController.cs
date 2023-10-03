@@ -12,7 +12,7 @@ namespace Yudiz.VRArchery.Managers
         #region PUBLIC_VARS
         public static GameController inst;
         public bool canThrowArrow;
-        public Arrow tempArrow;
+        //public Arrow tempArrow;
         public Arrow currentArrow;
         public AsteroidData asteroidData;
         #endregion
@@ -25,7 +25,7 @@ namespace Yudiz.VRArchery.Managers
         public List<Arrow> allArrows;
         [SerializeField] private Arrow arrowPrefab;
         [SerializeField] private List<Transform> spwanArrowPoint;
-        [SerializeField] private Transform distance;
+        //[SerializeField] private Transform distance;
 
 
         [Header("Arrow Force Area")]
@@ -47,7 +47,7 @@ namespace Yudiz.VRArchery.Managers
         private void OnEnable()
         {
             GameEvents.onArrowThrowen += AddForceToArrow;
-            GameEvents.onCheckDistance += CheckValidThrowOrNot;
+            //GameEvents.onCheckDistance += CheckValidThrowOrNot;
             //Arrow.OnThisArrowAddForce += AddForceToArrow;
             //Arrow.OnCollisionShouldResetOrNot += CheckValidThrowOrNot;
             GameEvents.spwanArrow += SpwanNewArrow;
@@ -56,7 +56,7 @@ namespace Yudiz.VRArchery.Managers
         private void OnDisable()
         {
             GameEvents.onArrowThrowen -= AddForceToArrow;
-            GameEvents.onCheckDistance -= CheckValidThrowOrNot;
+            //GameEvents.onCheckDistance -= CheckValidThrowOrNot;
             //Arrow.OnThisArrowAddForce -= AddForceToArrow;
             //Arrow.OnCollisionShouldResetOrNot -= CheckValidThrowOrNot;
             GameEvents.spwanArrow -= SpwanNewArrow;
@@ -126,33 +126,33 @@ namespace Yudiz.VRArchery.Managers
         }
 
 
-        public void CheckValidThrowOrNot(Arrow arrow)
-        {
-            if (tempArrow == arrow)
-            {
-                float dis = Vector3.Distance(distance.position, arrow.transform.position);
-                Debug.Log("bunss" + dis);
-                if (dis < 1)
-                {
-                    arrow.ResetArrowPos();
-                    tempArrow = null;
-                }
-                else
-                {
-                    Debug.Log("is Remove");
-                    allArrows.Remove(arrow);
-                    Destroy(arrow, 5);
-                    CheckGameOver();
-                    tempArrow = null;
-                }
-            }
-        }
+        //public void CheckValidThrowOrNot(Arrow arrow)
+        //{
+        //    if (tempArrow == arrow)
+        //    {
+        //        //float dis = Vector3.Distance(distance.position, arrow.transform.position);
+        //        //Debug.Log("bunss" + dis);
+        //        //if (dis < 1)
+        //        //{
+        //        //    arrow.ResetArrowPos();
+        //        //    tempArrow = null;
+        //        //}
+        //        //else
+        //        //{
+        //            Debug.Log("is Remove");
+        //            allArrows.Remove(arrow);
+        //            Destroy(arrow.gameObject, 5f);
+        //            CheckGameOver();
+        //            tempArrow = null;
+        //        //}
+        //    }
+        //}    
 
         public void CheckGameOver()
         {
             if (allArrows.Count == 0)
             {
-                Invoke(nameof(GameOverPage), 1f);
+                Invoke(nameof(GameOverPage), 1.6f);
             }
         }
 
@@ -169,7 +169,7 @@ namespace Yudiz.VRArchery.Managers
         [ContextMenu("Throw Arrow")]
         public void TestThrowArrow()
         {
-            tempArrow = currentArrow;
+            //tempArrow = currentArrow;
             forcePower = PullValue();
             //BowThrower(forcePower);
             bow.BowThrower(forcePower, currentArrow);
@@ -254,7 +254,7 @@ namespace Yudiz.VRArchery.Managers
             //bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
             bow.DrawProjection(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
 
-            tempArrow = currentArrow;
+            //tempArrow = currentArrow;
             canThrowArrow = true;
         }
 

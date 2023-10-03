@@ -25,8 +25,8 @@ namespace Yudiz.VRArchery.Managers
         public delegate void OnArrowThrowen();
         public static OnArrowThrowen onArrowThrowen;
 
-        public delegate void OnCheckDistance(Arrow arrow);
-        public static OnCheckDistance onCheckDistance;        
+        //public delegate void OnCheckDistance(Arrow arrow);
+        //public static OnCheckDistance onCheckDistance;        
 
     }
 }
