@@ -15109,7 +15109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xrGrabInteractable: {fileID: 8360700991437267644}
   ModelArrow: {fileID: 1955201094757788127}
-  isColliding: 0
+  isThrow: 0
   trailParticle: {fileID: 618274681740390590}
   hitParticle: {fileID: 4372842915662816994}
   trailRenderer: {fileID: 5735834816952240941}
@@ -15303,8 +15303,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.0092256805
-  m_Center: {x: 0, y: 0.0025058552, z: 0.48}
+  m_Radius: 0.001
+  m_Center: {x: 0.0012, y: 0.002, z: 0.48}
 --- !u!65 &3099786881999096725
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15347,7 +15347,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c1e785f4ca2275348a09e450b3bcb37e, type: 2}
+  - {fileID: 2100000, guid: ee080ec806af6452082dbf593658b715, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -15368,7 +15368,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 1
+  m_Time: 2
   m_PreviewTimeScale: 1
   m_Parameters:
     serializedVersion: 3
@@ -15400,7 +15400,7 @@ TrailRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 1, g: 1, b: 1, a: 1}
-      key1: {r: 1, g: 1, b: 1, a: 1}
+      key1: {r: 1, g: 1, b: 1, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -15417,7 +15417,7 @@ TrailRenderer:
       ctime7: 0
       atime0: 0
       atime1: 65535
-      atime2: 0
+      atime2: 65535
       atime3: 0
       atime4: 0
       atime5: 0

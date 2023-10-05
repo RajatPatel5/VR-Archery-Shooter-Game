@@ -17,6 +17,7 @@ namespace Yudiz.VRArchery.UI
 
         void GamePlayNow()
         {
+            AudioManager.inst.PlayAudio(AudioManager.AudioName.Onclick);
             ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);            
             GameEvents.spwanArrow?.Invoke();
             GameEvents.onLoadingHighScore?.Invoke();

@@ -34,6 +34,8 @@ namespace Yudiz.VRArchery.Managers
         [SerializeField] private float maxValue;
         [SerializeField] private float enterRange;
         [SerializeField] private float exitRange;
+        [SerializeField] private float minResolution;
+        [SerializeField] private float maxResolution;
         [SerializeField] private bool isSnap;
         private bool isGameOn = false;
         #endregion
@@ -63,7 +65,13 @@ namespace Yudiz.VRArchery.Managers
         }
 
         private void Start()
-        {            
+        {
+
+
+           float pullValue = 200f;
+            float t = Mathf.Clamp(pullValue, 0, 1);
+            Debug.Log("T:" + t);
+
             isGameOn = true;
             //SpawnRandomAsteroid();
             StartCoroutine(GenerateAsteroids());
@@ -176,15 +184,26 @@ namespace Yudiz.VRArchery.Managers
             //UnAssignArrow();
         }
 
+        
+        public float PullValueForResolution(float pullValue)
+        {
+            pullValue = 100f;
+            float t = Mathf.Clamp(pullValue, 0, 1);
+
+            Debug.Log("T:" + t);
+            float resolutionValue = minResolution + ((maxResolution - minResolution) * (1 - t));
+            Debug.Log("Tresol:" + resolutionValue);
+            return resolutionValue;
+        }
+
         public float PullValue()
         {
             float pullDirection = Vector3.Distance(bow.arrowStartPoint.position, bow.arrowEndPoint.position);
             float targetDirection = Vector3.Distance(bow.arrowStartPoint.position, bow.pointBetweenStartAndEnd.position);
             float pullValue = targetDirection / pullDirection;
             float t = Mathf.Clamp(pullValue, 0, 1);
-            float streach = minValue + t * (maxValue - minValue);
-            //Debug.Log("streach : " + streach);
-            return streach;
+            float streachValue = minValue + t * (maxValue - minValue);            
+            return streachValue;
         }
 
         public Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
@@ -250,6 +269,7 @@ namespace Yudiz.VRArchery.Managers
             bow.trajectoryLine.enabled = true;
 
             float force = PullValue();
+            Debug.Log(force + ": Force");
             //bow.CalculateTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
             //bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
             bow.DrawProjection(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());

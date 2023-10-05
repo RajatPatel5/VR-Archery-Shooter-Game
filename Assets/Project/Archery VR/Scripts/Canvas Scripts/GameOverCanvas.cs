@@ -31,6 +31,7 @@ namespace Yudiz.VRArchery.UI
 
         void BackHomeScreen()
         {
+            AudioManager.inst.PlayAudio(AudioManager.AudioName.Onclick);
             ScreenManager.instance.ShowNextScreen(ScreenType.HomeScreen);
         }
 
@@ -38,6 +39,7 @@ namespace Yudiz.VRArchery.UI
         {
             //ScreenManager.instance.ShowNextScreen(ScreenType.CountDownCanvas);
             //GameEvents.countDown?.Invoke();
+            AudioManager.inst.PlayAudio(AudioManager.AudioName.Onclick);
             ScreenManager.instance.ShowNextScreen(ScreenType.GamePlayCanvas);
             GameEvents.spwanArrow?.Invoke();
             GameEvents.onLoadingHighScore?.Invoke();
@@ -46,6 +48,7 @@ namespace Yudiz.VRArchery.UI
 
         public void OnGameOver()
         {
+            //AudioManager.inst.PlayAudio(AudioManager.AudioName.Onclick);
             //ScoreManager.instance.ConnectGamePlayAndGameOverScore(this);
             yourScore.text = ScoreManager.instance.tempCurrentScore.ToString();
             HighScoreTillNow.text = ScoreManager.instance.tempHighScore.ToString();

@@ -23,16 +23,11 @@ namespace Yudiz.VRArchery.CoreGameplay
         //public static event Action<Arrow> OnCollisionShouldResetOrNot;
         #endregion
 
-        #region PRIVATE_VARS
-        //[SerializeField] private BoxCollider frontCollider;
-        //[SerializeField] private SphereCollider backCollider;        
-        [SerializeField] private Rigidbody arrowRB;
-        //private bool isReadyToThrow = false;
+        #region PRIVATE_VARS        
+        [SerializeField] private Rigidbody arrowRB;       
         private Vector3 initialPosition;
         private Quaternion initialRotation;
-
-        private Vector3 startPosArrow;
-        //private bool dropByMistake;
+        private Vector3 startPosArrow;        
         #endregion
 
 
@@ -193,39 +188,14 @@ namespace Yudiz.VRArchery.CoreGameplay
                 hitParticle.Play();
                 trailRenderer.emitting = false;
             }
-        }
-
-        IEnumerator FadeLineRenderer()
-        {
-            Gradient lineRendererGradient = new();
-            float fadeSpeed = 3f;
-            float timeElapsed = 0f;
-            float alpha = 1f;
-
-            while (timeElapsed < fadeSpeed)
-            {
-                alpha = Mathf.Lerp(1f, 0f, timeElapsed / fadeSpeed);
-
-                lineRendererGradient.SetKeys
-                (
-                    modelTrialRenderer.colorGradient.colorKeys,
-                    new GradientAlphaKey[] { new GradientAlphaKey(alpha, 1f) }
-                );
-                modelTrialRenderer.colorGradient = lineRendererGradient;
-
-                timeElapsed += Time.deltaTime;
-                yield return null;
-            }
-
-            //Destroy(modelTrialRenderer);
-        }
+        }       
         #endregion
 
 
         #region PUBLIC_FUNCTIONS
         public void ResetArrowPos()
         {
-            StopCoroutine(FadeLineRenderer());
+            //StopCoroutine(FadeLineRenderer());
             modelTrialRenderer.enabled = false;
             ArrowParticles(false);
             transform.SetPositionAndRotation(initialPosition, initialRotation);
@@ -238,7 +208,7 @@ namespace Yudiz.VRArchery.CoreGameplay
             startPosArrow = transform.position;
             isThrow = true;
             modelTrialRenderer.enabled = true;
-            StartCoroutine(FadeLineRenderer());
+            //StartCoroutine(FadeLineRenderer());
             ArrowParticles(true);
             SetPhysics(true);
             arrowRB.AddForce(force, ForceMode.Impulse);

@@ -16,7 +16,7 @@ namespace Yudiz.VRArchery.CoreGameplay
         public bool isGrabingBow;
         #endregion
 
-        #region PRIVATE_VARS
+        #region PRIVATE_VARS        
         private Vector3 initialArrowPos;
         private Vector3 initialPos;
         private Quaternion initialRotation;
@@ -63,14 +63,16 @@ namespace Yudiz.VRArchery.CoreGameplay
             bowString.SetPosition(1, linePosition);
             //bowString2.SetPosition(1, linePosition);
         }
-        //Vector3 point;
+
         public void DrawProjection(float intialForce, LineRenderer line, Rigidbody rb)
         {
-            int resolution = 100;
+            float resolutionValue = GameController.inst.PullValueForResolution(intialForce);
+            int resolution = (int)resolutionValue;
+            Debug.Log("Resolution: " + resolution);
             float TimeBetweenPoints = 0.1f;
             Transform ReleasePosition = transform;
 
-            line.positionCount = Mathf.CeilToInt(resolution / TimeBetweenPoints) + 1;
+            //line.positionCount = Mathf.CeilToInt(resolution / TimeBetweenPoints) + 1;
             Vector3 startPosition = ReleasePosition.position;
             Vector3 startVelocity = intialForce * transform.forward / rb.mass;
             int i = 0;
@@ -79,7 +81,6 @@ namespace Yudiz.VRArchery.CoreGameplay
             List<Vector3> points = new List<Vector3>();
             Vector3 previousPosition = transform.position;
 
-            //bool hasHit = false;
 
             for (float time = 0; time < resolution; time += TimeBetweenPoints)
             {
@@ -87,24 +88,22 @@ namespace Yudiz.VRArchery.CoreGameplay
                 Vector3 point = startPosition + time * startVelocity;
                 point.y = startPosition.y + startVelocity.y * time + (Physics.gravity.y / 2f * time * time);
                 float dis = Vector3.Distance(previousPosition, point);
-                //line.SetPosition(i, point);
+
                 points.Add(point);
-                if (dis > 3)
+                //Debug.Log("Distance Points: " + dis);
+                if (dis > 1f)
                 {
                     line.positionCount = i;
                     line.SetPositions(points.ToArray());
+                    //Debug.Log("Break");
+                    //line.SetPosition(i, point);
                     break;
                 }
-
-                line.SetPosition(i, point);
             }
-            //line.positionCount = i;
-            //line.SetPositions(points.ToArray());
-            //line.SetPosition(i, point);
-
 
         }
-        //line.positionCount = (int)(timeOfFlight / timeStep);
+        //Vector3 point;
+
         //Material lineMat = line.material;
         //RaycastHit hit;
         //if (Physics.Raycast(previousPosition, point - previousPosition, out hit, Vector3.Distance(previousPosition, point)))
