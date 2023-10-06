@@ -99,6 +99,7 @@ namespace Yudiz.VRArchery.CoreGameplay
 
             else if (collision.collider.CompareTag("Ground"))
             {
+                AudioManager.inst.PlayAudio(AudioManager.AudioName.Onhitwall);
                 Debug.Log("is Grounded");
                 ArrowParticles(false);
                 //isReadyToThrow = false;
@@ -108,6 +109,7 @@ namespace Yudiz.VRArchery.CoreGameplay
             }
             else if (collision.collider.CompareTag("Wall"))
             {
+                AudioManager.inst.PlayAudio(AudioManager.AudioName.Onhitwall);
                 ArrowParticles(false);
                 arrowRB.velocity = Vector3.zero;
                 isThrow = false;

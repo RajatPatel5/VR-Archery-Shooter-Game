@@ -166,7 +166,7 @@ namespace Yudiz.VRArchery.Managers
 
         public void AddForceToArrow()
         {
-            forcePower = PullValue();
+            forcePower = GetForceValue();
             //tempArrow = currentArrow;
             //forcePower = PullValue();
             bow.BowThrower(forcePower, currentArrow);
@@ -178,7 +178,7 @@ namespace Yudiz.VRArchery.Managers
         public void TestThrowArrow()
         {
             //tempArrow = currentArrow;
-            forcePower = PullValue();
+            forcePower = GetForceValue();
             //BowThrower(forcePower);
             bow.BowThrower(forcePower, currentArrow);
             //UnAssignArrow();
@@ -187,16 +187,16 @@ namespace Yudiz.VRArchery.Managers
         
         public float PullValueForResolution(float pullValue)
         {
-            pullValue = 100f;
+            //pullValue = 100f;
+            Debug.Log("PullValue" + pullValue);
             float t = Mathf.Clamp(pullValue, 0, 1);
-
             Debug.Log("T:" + t);
             float resolutionValue = minResolution + ((maxResolution - minResolution) * (1 - t));
             Debug.Log("Tresol:" + resolutionValue);
             return resolutionValue;
         }
 
-        public float PullValue()
+        public float GetForceValue()
         {
             float pullDirection = Vector3.Distance(bow.arrowStartPoint.position, bow.arrowEndPoint.position);
             float targetDirection = Vector3.Distance(bow.arrowStartPoint.position, bow.pointBetweenStartAndEnd.position);
@@ -268,7 +268,7 @@ namespace Yudiz.VRArchery.Managers
             currentArrow.xrGrabInteractable.trackRotation = false;
             bow.trajectoryLine.enabled = true;
 
-            float force = PullValue();
+            float force = GetForceValue();
             Debug.Log(force + ": Force");
             //bow.CalculateTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());
             //bow.CalculateHalfTrajectory(force, bow.trajectoryLine, currentArrow.GetComponent<Rigidbody>());

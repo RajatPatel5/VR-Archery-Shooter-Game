@@ -61,9 +61,11 @@ namespace Yudiz.VRArchery.UI
             {
                 ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(yourScore.text);
                 HighScoreTillNow.text = yourScore.text;
+                AudioManager.inst.PlayAudio(AudioManager.AudioName.Wooh);
             }
             else
             {
+                AudioManager.inst.PlayAudio(AudioManager.AudioName.BetterLuckNextTime);
                 ScoreManager.instance.scoreData.HighScore = Convert.ToInt32(HighScoreTillNow.text);
             }
             ScoreManager.instance.SaveData();

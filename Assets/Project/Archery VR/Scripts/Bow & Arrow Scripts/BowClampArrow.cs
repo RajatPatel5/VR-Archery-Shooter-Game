@@ -36,7 +36,7 @@ namespace Yudiz.VRArchery.CoreGameplay
                 bow.UpdatePullingString(bow.pointBetweenStartAndEnd.localPosition);
                 var dir = bow.arrowStartPoint.position - bow.arrowEndPoint.position;
                 gameController.currentArrow.ModelArrow.transform.position = gameController.NearestPointOnLine(bow.arrowStartPoint.position, dir, gameController.currentArrow.ModelArrow.transform.position);
-                gameController.forcePower = gameController.PullValue();
+                gameController.forcePower = gameController.GetForceValue();
                 //bow.CalculateTrajectory(gameController.forcePower, bow.trajectoryLine, other.GetComponent<Rigidbody>());
             }
         }

@@ -44,9 +44,12 @@ namespace Yudiz.VRArchery.Managers
         public enum AudioName
         {            
             Onclick,
-            Onhit,            
-            Onwinning,
-            Onfail,
+            BetterLuckNextTime,
+            Excellent,
+            GoodShort,
+            GoodOne,
+            Wooh,
+            Onhitwall,                        
         }
     }
 }
