@@ -121,9 +121,6 @@ namespace Yudiz.VRArchery.Managers
             ScreenManager.instance.ShowNextScreen(ScreenType.GameOverPage);
             GameEvents.onGameOver?.Invoke();
         }
-
-
-
         public void SpwanNewArrow()
         {
             for (int i = 0; i < spwanArrowPoint.Count; i++)
@@ -131,35 +128,13 @@ namespace Yudiz.VRArchery.Managers
                 Arrow arrow = Instantiate(arrowPrefab, spwanArrowPoint[i].position, spwanArrowPoint[i].rotation);
                 allArrows.Add(arrow);
             }
-        }
-
-
-        //public void CheckValidThrowOrNot(Arrow arrow)
-        //{
-        //    if (tempArrow == arrow)
-        //    {
-        //        //float dis = Vector3.Distance(distance.position, arrow.transform.position);
-        //        //Debug.Log("bunss" + dis);
-        //        //if (dis < 1)
-        //        //{
-        //        //    arrow.ResetArrowPos();
-        //        //    tempArrow = null;
-        //        //}
-        //        //else
-        //        //{
-        //            Debug.Log("is Remove");
-        //            allArrows.Remove(arrow);
-        //            Destroy(arrow.gameObject, 5f);
-        //            CheckGameOver();
-        //            tempArrow = null;
-        //        //}
-        //    }
-        //}    
+        }     
 
         public void CheckGameOver()
         {
             if (allArrows.Count == 0)
             {
+                CancelInvoke(nameof(GameOverPage));
                 Invoke(nameof(GameOverPage), 1.6f);
             }
         }
