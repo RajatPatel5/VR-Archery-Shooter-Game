@@ -12387,19 +12387,19 @@ MonoBehaviour:
   audioSource: {fileID: 596115277}
   clips:
   - name: 0
-    clip: {fileID: 8300000, guid: 82be3e62a57e744b08e1d16d8dbddd32, type: 3}
+    clip: {fileID: 8300000, guid: b6b5854621be041eb88bebdd07155fa2, type: 3}
   - name: 1
-    clip: {fileID: 8300000, guid: cb128b473b9db4459b810d72a7c1904f, type: 3}
+    clip: {fileID: 8300000, guid: 7805da1d6e5fd4bcf934b010e698f6bc, type: 3}
   - name: 2
-    clip: {fileID: 8300000, guid: 9edfbe89892d147859f874d5180cd42b, type: 3}
+    clip: {fileID: 8300000, guid: a66ec4d711c53402e91a2664daf4b855, type: 3}
   - name: 4
-    clip: {fileID: 8300000, guid: 63e7b4399e68740a58f6ed74a460c3c8, type: 3}
+    clip: {fileID: 8300000, guid: 05c99508c88414d909657dac6da6bbbb, type: 3}
   - name: 3
-    clip: {fileID: 8300000, guid: deaf2144a7acb49c6ba795af08e59652, type: 3}
+    clip: {fileID: 8300000, guid: 574e36095303e477ca9907f49ef5fc9c, type: 3}
   - name: 6
-    clip: {fileID: 8300000, guid: 3daa0d08bdede4cdcb2ad5184544b951, type: 3}
+    clip: {fileID: 8300000, guid: 40d86964d249041dea48c87198d1d9b2, type: 3}
   - name: 5
-    clip: {fileID: 8300000, guid: d0f22af77e69c46da81b957a395819f7, type: 3}
+    clip: {fileID: 8300000, guid: 3a9435acc72304285a7bae874114e538, type: 3}
 --- !u!82 &596115279
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12410,7 +12410,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 4f26b71f97bdf4d9dae40ad5417e219d, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 160e383a398904cecabfe7b350fac658, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.394
   m_Pitch: 1
