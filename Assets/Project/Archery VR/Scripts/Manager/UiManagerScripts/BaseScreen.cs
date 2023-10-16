@@ -2,25 +2,28 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class BaseScreen : MonoBehaviour
+namespace Yudiz.VRArchery.UI
 {
-    [HideInInspector]
-    public Canvas canvas;
 
-    public ScreenType screenType;
-
-    private void Awake()
+    public class BaseScreen : MonoBehaviour
     {
-        canvas = GetComponent<Canvas>();
-        canvas.enabled = false;
+        [HideInInspector]
+        public Canvas canvas;
+
+        public ScreenType screenType;
+
+        private void Awake()
+        {
+            canvas = GetComponent<Canvas>();
+            canvas.enabled = false;
+        }
     }
-}
 
 
-public enum ScreenType
-{
-    HomeScreen,
-    GameOverPage,
-    GamePlayCanvas,    
+    public enum ScreenType
+    {
+        HomeScreen,
+        GameOverPage,
+        GamePlayCanvas,
+    }
 }

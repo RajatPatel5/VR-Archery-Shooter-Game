@@ -8,7 +8,7 @@ namespace Yudiz.VRArchery.CoreGameplay
     {                       
         void Update()
         {
-            transform.position += (Vector3.forward) * 1f* Time.deltaTime;
+            transform.position += 1f * Time.deltaTime * Vector3.forward;
         }
     }
 }

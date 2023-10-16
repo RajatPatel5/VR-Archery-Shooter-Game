@@ -1,31 +1,34 @@
 using UnityEngine;
-
-public class Singleton<T> : MonoBehaviour where T : Component
+namespace Yudiz.VRArchery.Managers
 {
 
-    public bool DontDestroyObjectOnLoad = false;
-    private static T _instance;
-    public static T Instance
+    public class Singleton<T> : MonoBehaviour where T : Component
     {
-        get
-        {
-            return _instance;
-        }
-    }
 
-    public virtual void Awake()
-    {
-        if (_instance == null)
+        public bool DontDestroyObjectOnLoad = false;
+        private static T _instance;
+        public static T Instance
         {
-            _instance = this as T;
-            if (DontDestroyObjectOnLoad)
+            get
             {
-                DontDestroyOnLoad(this.gameObject);
+                return _instance;
             }
         }
-        else
+
+        public virtual void Awake()
         {
-            Destroy(gameObject);
+            if (_instance == null)
+            {
+                _instance = this as T;
+                if (DontDestroyObjectOnLoad)
+                {
+                    DontDestroyOnLoad(this.gameObject);
+                }
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
