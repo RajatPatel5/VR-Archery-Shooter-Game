@@ -13,6 +13,8 @@ namespace Yudiz.VRArchery.Managers
         public delegate void OnGamePlay();
         public static OnGamePlay spwanArrow;
 
+        public static Action<int> OnTest;
+
         public delegate void OnGameOver();
         public static OnGameOver onGameOver;
 

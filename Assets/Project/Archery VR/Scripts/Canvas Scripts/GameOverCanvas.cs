@@ -22,17 +22,25 @@ namespace Yudiz.VRArchery.UI
         private void OnEnable()
         {
             GameEvents.onGameOver += OnGameOver;
+            GameEvents.OnTest += Test;
+        }
+
+        private void Test(int obj)
+        {
+            Debug.Log(obj);
         }
 
         private void OnDisable()
         {
             GameEvents.onGameOver -= OnGameOver;
+
         }
 
         void BackHomeScreen()
         {
             AudioManager.inst.PlayAudio(AudioManager.AudioName.Onclick);
             ScreenManager.instance.ShowNextScreen(ScreenType.HomeScreen);
+            //GameEvents.test(20);
         }
 
         public void RestartGame()
